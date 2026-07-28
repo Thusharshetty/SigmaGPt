@@ -1,0 +1,28 @@
+import "dotenv/config";
+
+const getOpenAiApiResponse=async(message)=>{
+ const options ={
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GEMINI_API_KEY}`
+    },
+    body: JSON.stringify({
+        model: "gemini-3.6-flash", 
+        messages: [{
+            role: "user",
+            content:message
+        }]
+    })
+  }
+  try{
+    const response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", options);
+    const data = await response.json();
+     return data.choices[0].message.content ;
+  }catch(e){
+   console.log(e); // 3. Matches the parameter above
+     return "Error connecting to AI service";
+  }
+};
+
+export default getOpenAiApiResponse;
