@@ -19,7 +19,7 @@ const getOpenAiApiResponse=async(message)=>{
     const response = await fetch("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", options);
     const data = await response.json();
     // console.log(data);
-     return data.choices[0].message.content ;
+     return data.choices[0].message.content;
   }catch(e){
    console.log(e); // 3. Matches the parameter above
      return "Error connecting to AI service";
