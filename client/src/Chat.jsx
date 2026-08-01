@@ -1,19 +1,37 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Chat.css'
 import { MyContext } from './MyContext'
 import ReactMarkdown from 'react-markdown';
 import rehypehighlight from 'rehype-highlight'
-import "highlight.js/styles/github.css"
+import "highlight.js/styles/github-dark.css"
 
 function Chat() {
-  const {newChat,chats}=useContext(MyContext)
+  const {newChat,chats,reply}=useContext(MyContext);
+  const [latestReply, setLatestReply] = useState(null);
+
+
+  useEffect(()=>{
+
+    if(!chats?.length) return;
+    const content =reply.split(" "); //this for word by word typing effect
+    // const content =reply.split(""); //this for character by character typing effect
+    let idx=0;
+    const interval =setInterval(()=>{
+      setLatestReply(content.slice(0,idx+1).join(" "))
+      idx++;
+      if( idx >= content.length){
+        clearInterval(interval);
+      }
+    },40);
+    return ()=>clearInterval(interval);
+  },[chats,reply])
   return (
     <>
       {newChat && <h1>Start a new chat!</h1>}
       
       <div className="chats">
         {
-          chats?.map((chat,idx)=>(
+          chats?.slice(0,-1).map((chat,idx)=>(
             <div className={chat.role === "user" ? "userDiv" : "gptDiv"} key={idx}>
               {chat.role === "user"  ?
                <p className='userMessage'>{chat.content}</p>
@@ -21,6 +39,12 @@ function Chat() {
                }
             </div>
           ))
+        }
+        {
+          chats?.length >0  && latestReply !== null &&
+          <div className="gptDiv" key={"typing"}>
+            <ReactMarkdown rehypePlugins={[rehypehighlight]}>{latestReply}</ReactMarkdown>
+          </div>
         }
       </div>
     </>
