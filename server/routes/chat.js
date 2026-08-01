@@ -20,7 +20,7 @@ router.post("/test",async(req,res)=>{
     }
 });
 
-router.get("/thread",async(req,res)=>{
+router.get("/threads",async(req,res)=>{
     try{
         const threads=await Thread.find({}).sort({updatedAt:-1});
         res.json(threads);
