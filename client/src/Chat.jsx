@@ -11,6 +11,10 @@ function Chat() {
 
 
   useEffect(()=>{
+    if(reply === null){
+      setLatestReply(null);
+      return;
+    }
 
     if(!chats?.length) return;
     const content =reply.split(" "); //this for word by word typing effect
@@ -27,9 +31,10 @@ function Chat() {
   },[chats,reply])
   return (
     <>
-      {newChat && <h1>Start a new chat!</h1>}
+      {newChat && chats?.length ==0 && <h1>Start a new chat!</h1>}
       
       <div className="chats">
+        <h1>{chats?.length > 0 ?chats[0]?.content :""}</h1>
         {
           chats?.slice(0,-1).map((chat,idx)=>(
             <div className={chat.role === "user" ? "userDiv" : "gptDiv"} key={idx}>
@@ -44,6 +49,12 @@ function Chat() {
           chats?.length >0  && latestReply !== null &&
           <div className="gptDiv" key={"typing"}>
             <ReactMarkdown rehypePlugins={[rehypehighlight]}>{latestReply}</ReactMarkdown>
+          </div>
+        }
+         {
+          chats?.length >0  && latestReply === null &&
+          <div className="gptDiv" key={"non-typing"}>
+            <ReactMarkdown rehypePlugins={[rehypehighlight]}>{chats[chats.length - 1]?.content}</ReactMarkdown>
           </div>
         }
       </div>
